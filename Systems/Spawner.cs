@@ -1,14 +1,12 @@
 // File: Systems/Spawner.cs
 using System;
 using System.Collections.Generic;
+using SplashKitSDK;
 
 namespace NeonDrift
 {
     /// <summary>
-    /// Spawns and manages falling obstacles + collectible shards.
-    /// - Interval-based spawning with a mild difficulty ramp
-    /// - Randomly chooses obstacle vs shard (see _shardChance)
-    /// - Prunes off-screen entities
+    /// Spawns falling car obstacles + collectible shards.
     /// </summary>
     public sealed class Spawner : IUpdatable, IRenderable
     {
@@ -18,11 +16,17 @@ namespace NeonDrift
         private readonly Random _rng = new();
 
         private int _cooldown;
-        private int _baseInterval;      // frames between spawns
-        private double _baseSpeed;      // base fall speed
+        private int _baseInterval;
+        private double _baseSpeed;
         private int _frame;
 
-        private readonly double _shardChance; // probability per spawn
+        private readonly double _shardChance;
+
+        // Names must match bundle entries (see main.txt)
+        private static readonly string[] CarNames =
+        {
+            "car_red", "car_yellow", "car_black", "car_blue"
+        };
 
         public Spawner(double worldWidth, double worldHeight, int initialInterval = 50, double baseSpeed = 3.5, double shardChance = 0.25)
         {
@@ -48,20 +52,16 @@ namespace NeonDrift
                 ResetCooldown();
             }
 
-            // Update/prune obstacles
             for (int i = _obstacles.Count - 1; i >= 0; i--)
             {
-                var o = _obstacles[i];
-                o.Update();
-                if (!o.IsAlive) _obstacles.RemoveAt(i);
+                _obstacles[i].Update();
+                if (!_obstacles[i].IsAlive) _obstacles.RemoveAt(i);
             }
 
-            // Update/prune shards
             for (int i = _shards.Count - 1; i >= 0; i--)
             {
-                var s = _shards[i];
-                s.Update();
-                if (!s.IsAlive) _shards.RemoveAt(i);
+                _shards[i].Update();
+                if (!_shards[i].IsAlive) _shards.RemoveAt(i);
             }
         }
 
@@ -80,18 +80,24 @@ namespace NeonDrift
         private void SpawnOne()
         {
             if (_rng.NextDouble() < _shardChance) SpawnShard();
-            else                                   SpawnObstacle();
+            else                                   SpawnCarObstacle();
         }
 
-        private void SpawnObstacle()
+        private void SpawnCarObstacle()
         {
-            double w = Lerp(36, 72, _rng.NextDouble());
-            double h = Lerp(20, 40, _rng.NextDouble());
-            double x = _rng.NextDouble() * (_worldW - w);
+            // Pick a random car bitmap
+            string name = CarNames[_rng.Next(CarNames.Length)];
+            Bitmap bmp = SplashKit.BitmapNamed(name);           // loaded via bundle :contentReference[oaicite:6]{index=6}
+
+            double w = SplashKit.BitmapWidth(bmp);
+            double h = SplashKit.BitmapHeight(bmp);
+
+            double x = _rng.NextDouble() * Math.Max(1.0, (_worldW - w));
             double y = -h;
+
             double speed = _baseSpeed + Lerp(0.0, 3.0, DifficultyFactor());
 
-            _obstacles.Add(new Obstacle(x, y, w, h, speed, _worldH));
+            _obstacles.Add(new Obstacle(x, y, speed, _worldH, bmp));
         }
 
         private void SpawnShard()
@@ -110,7 +116,7 @@ namespace NeonDrift
         {
             int elapsedSeconds = _frame / 60;
             int interval = Math.Max(16, _baseInterval - (elapsedSeconds / 10));
-            int jitter = _rng.Next(-4, 5); // [-4,+4]
+            int jitter = _rng.Next(-4, 5);
             _cooldown = Math.Max(8, interval + jitter);
         }
 

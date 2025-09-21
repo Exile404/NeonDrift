@@ -1,5 +1,3 @@
-NeonDrift.sln
-NeonDrift.csproj
 Darren Curtis Music - Crime Never Sleeps.zip
 myeasylog.log
 kenney_racing-pack.zip
@@ -7,3 +5,4 @@ bin/
 Darren Curtis Music - Crime Never Sleeps
 obj
 .vscode
+kenney_racing-pack
