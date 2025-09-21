@@ -1,7 +1,7 @@
-# Neon Drift — An OOP + SplashKit tutorial in C\#
+# Neon Drift - An OOP + SplashKit tutorial in C\#
 
 > A publish-ready, step-by-step walkthrough showing how to design and build a small arcade game (“Neon Drift”) in C# with SplashKit, while explicitly demonstrating OOP design, state management, resource bundles, input, collisions, drawing, audio, and packaging. This tutorial is written in Markdown and maps the work to the unit’s learning outcomes for SIT771 Task 7.4H (High Distinction).&#x20;
-
+Github repo: https://github.com/Exile404/NeonDrift
 ---
 
 ## What you’ll build
@@ -51,7 +51,7 @@ NeonDrift/
 
 ---
 
-## Step 1 — Create a window and the main loop
+## Step 1 - Create a window and the main loop
 
 SplashKit GUIs must call **`ProcessEvents()` once every frame** to update key/mouse state; then you handle input, update, draw, and refresh. ([SplashKit][2])
 
@@ -83,7 +83,7 @@ public static class Program
 
 ---
 
-## Step 2 — Load assets with **resource bundles**
+## Step 2 - Load assets with **resource bundles**
 
 Create `Resources/bundles/main.txt` and list each asset as a CSV line. Supported kinds include **`BITMAP`**, **`SOUND`**, **`MUSIC`**, **`FONT`**, etc. Load the bundle at startup and you can retrieve assets by **name**. ([SplashKit][4])
 
@@ -102,7 +102,7 @@ Why use bundles? They centralize asset names → filenames and let you load a wh
 
 ---
 
-## Step 3 — A tiny **state machine**
+## Step 3 - A tiny **state machine**
 
 ```csharp
 public interface IGameState : IDisposable
@@ -128,11 +128,11 @@ public sealed class StateMachine : IDisposable
 }
 ```
 
-`Game.cs` owns `StateMachine` and exposes **`StartGame()`**, **`ShowMenu()`**, **`GameOver(score)`**, and a `QuitRequested` flag (used by the loop). This isolates flow from features—clean OOP.
+`Game.cs` owns `StateMachine` and exposes **`StartGame()`**, **`ShowMenu()`**, **`GameOver(score)`**, and a `QuitRequested` flag (used by the loop). This isolates flow from features-clean OOP.
 
 ---
 
-## Step 4 — Input abstraction
+## Step 4 - Input abstraction
 
 SplashKit exposes **KeyDown / KeyTyped** after `ProcessEvents()`. Wrap it in an interface so the Player doesn’t depend on the engine: ([SplashKit][2])
 
@@ -149,7 +149,7 @@ public sealed class KeyboardInput : IInputSource
 
 ---
 
-## Step 5 — Player & rendering with bitmaps
+## Step 5 - Player & rendering with bitmaps
 
 Use **`BitmapNamed`** to retrieve a bitmap by name and **`DrawBitmap`** each frame. Use **`BitmapWidth/Height`** for hitboxes and clamping. ([SplashKit][5])
 
@@ -179,7 +179,7 @@ public sealed class Player : IUpdatable, IRenderable, ICollidable
 
 ---
 
-## Step 6 — Obstacles, shards, and a spawner
+## Step 6 - Obstacles, shards, and a spawner
 
 The spawner randomly creates **car** obstacles (choosing one of four bitmaps) and slower **shards** (score pickups). Each object implements `IUpdatable`, `IRenderable`, `ICollidable`.
 
@@ -198,7 +198,7 @@ private void SpawnCar()
 
 ---
 
-## Step 7 — Collisions
+## Step 7 - Collisions
 
 Build a `CollisionSystem` to check **AABB** overlaps each frame. SplashKit provides **`RectangleFrom`** and **`RectanglesIntersect`** helpers so you don’t write your own geometry. ([SplashKit][6])
 
@@ -222,7 +222,7 @@ for (int i = _spawner.Shards.Count - 1; i >= 0; i--)
 
 ---
 
-## Step 8 — HUD & drawing order
+## Step 8 - HUD & drawing order
 
 In your `Game.Draw()`:
 
@@ -235,7 +235,7 @@ SplashKit exposes graphics primitives, text, and images; call **`ClearScreen`**,
 
 ---
 
-## Step 9 — Audio (BGM & SFX)
+## Step 9 - Audio (BGM & SFX)
 
 Initialize audio once; then either:
 
@@ -260,7 +260,7 @@ SplashKit’s **resource bundle** and **resources API** document how these names
 
 ---
 
-## Step 10 — Polishing touches
+## Step 10 - Polishing touches
 
 * **Fullscreen toggle**: `if (SplashKit.KeyTyped(KeyCode.F11Key)) window.ToggleFullscreen();`
 * **Menu & GameOver text**: draw with `DrawText` after you’ve cleared the frame.
@@ -300,7 +300,7 @@ Single-file/self-contained is a supported .NET deployment model; the `IncludeNat
 Create `ATTRIBUTIONS.txt`:
 
 ```
-Music: "Crime Never Sleeps" — Darren Curtis (credit per author’s page)
+Music: "Crime Never Sleeps" - Darren Curtis (credit per author’s page)
 Car/motorcycle images: your source and license here
 Built with SplashKit (https://splashkit.io/)
 ```
@@ -318,7 +318,7 @@ These items directly satisfy the brief’s request to “Provide a tutorial on t
 
 ---
 
-## Appendix — minimal code links (by topic)
+## Appendix - minimal code links (by topic)
 
 * **Bundles & resources**: how `main.txt` is structured and loaded. ([SplashKit][4])
 * **Input**: `ProcessEvents`, `KeyDown`, `KeyTyped`. ([SplashKit][2])
