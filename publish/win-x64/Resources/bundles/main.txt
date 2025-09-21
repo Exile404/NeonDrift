@@ -1,6 +1,0 @@
-SOUND,bgm,crime_never_sleeps.wav
-BITMAP,player_bike,motorcycle_green.png
-BITMAP,car_red,car_red_small_4.png
-BITMAP,car_yellow,car_yellow_small_4.png
-BITMAP,car_black,car_black_small_4.png
-BITMAP,car_blue,car_blue_small_4.png
